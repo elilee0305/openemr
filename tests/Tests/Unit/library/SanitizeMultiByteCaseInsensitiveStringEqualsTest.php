@@ -57,4 +57,16 @@ class SanitizeMultiByteCaseInsensitiveStringEqualsTest extends TestCase
         $string2 = str_repeat('A', 100000);
         $this->assertTrue(mb_is_string_equal_ci($string1, $string2));
     }
+
+    # Newly added by 6/9/2025
+    public function testWhitespaceSensitivity(): void
+    {
+        // Same letters, but one has a space
+        $this->assertFalse(mb_is_string_equal_ci('OpenEMR', 'Open EMR'));
+
+        // Strings with leading/trailing whitespace
+        $this->assertFalse(mb_is_string_equal_ci(' OpenEMR', 'OpenEMR'));
+        $this->assertFalse(mb_is_string_equal_ci('OpenEMR', 'OpenEMR '));
+    }
 }
+
