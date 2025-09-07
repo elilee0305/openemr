@@ -24,9 +24,11 @@ class NumberToTextTest extends TestCase
                   array( 14000, 'fourteen thousand'),
                   array( 9,     'nine'),
                   array( 99,    'ninety-nine'),
-                  array( 100,   'one hundred'),
+                  array( 100,   'one hundred'), 
                   array( 1000,  'one thousand'),
                   array( 1111,  'one thousand one hundred eleven'),
+                  array(-123, 'negative one hundred twenty-three'), #Test converting negative numbers
+                  array(1234567890, 'one billion two hundred thirty-four million five hundred sixty-seven thousand eight hundred ninety') #Test converting large numbers
                   );
     }
 }
