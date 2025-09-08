@@ -10,3 +10,4 @@ if (php_sapi_name() !== 'cli') {
 $_GET['site'] = 'default';
 $ignoreAuth = true;
 require_once(__DIR__ . "/../interface/globals.php");
+

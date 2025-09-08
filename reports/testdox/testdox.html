@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Test Documentation</title>
+        <style>
+            body {
+                text-rendering: optimizeLegibility;
+                font-family: Source SansSerif Pro, Arial, sans-serif;
+                font-variant-ligatures: common-ligatures;
+                font-kerning: normal;
+                margin-left: 2rem;
+                background-color: #fff;
+                color: #000;
+            }
+
+            body > ul > li {
+                font-size: larger;
+            }
+
+            h2 {
+                font-size: larger;
+                text-decoration-line: underline;
+                text-decoration-thickness: 2px;
+                margin: 0;
+                padding: 0.5rem 0;
+            }
+
+            ul {
+                list-style: none;
+                margin: 0 0 2rem;
+                padding: 0 0 0 1rem;
+                text-indent: -1rem;
+            }
+
+            .success:before {
+                color: #4e9a06;
+                content: '✓';
+                padding-right: 0.5rem;
+            }
+
+            .defect {
+                color: #a40000;
+            }
+
+            .defect:before {
+                color: #a40000;
+                content: '✗';
+                padding-right: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Acl Main (OpenEMR\Tests\Unit\Common\Acl\AclMain)</h2>
+        <ul>
+            <li class="success">Acl check core</li>
+        </ul>
+        <h2>Action Router (OpenEMR\Tests\Unit\ClinicalDecisionRules\ActionRouter)</h2>
+        <ul>
+            <li class="success">Route with browse list action</li>
+            <li class="success">Forward behavior</li>
+            <li class="success">Redirect behavior</li>
+        </ul>
+        <h2>Client Admin Controller (OpenEMR\Tests\Unit\FHIR\SMART\ClientAdminController)</h2>
+        <ul>
+            <li class="success">Dispatch</li>
+            <li class="success">Dispatch with external c d r</li>
+        </ul>
+        <h2>Client Entity (OpenEMR\Tests\Unit\Common\Auth\OpenIDConnect\Entities\ClientEntity)</h2>
+        <ul>
+            <li class="success">Has scope</li>
+        </ul>
+        <h2>Common (OpenEMR\Tests\Unit\ClinicalDecisionRules\Common)</h2>
+        <ul>
+            <li class="success">Implode funcs</li>
+            <li class="success">Get</li>
+            <li class="success">Post</li>
+            <li class="success">Base url</li>
+            <li class="success">Src dir</li>
+            <li class="success">Base dir</li>
+            <li class="success">Library dir</li>
+            <li class="success">Library src</li>
+        </ul>
+        <h2>Controller Edit (OpenEMR\Tests\Unit\ClinicalDecisionRules\ControllerEdit)</h2>
+        <ul>
+            <li class="success">Action summary</li>
+            <li class="success">Action submit summary with new rule</li>
+            <li class="success">Action intervals</li>
+            <li class="defect">Action submit intervals</li>
+            <li class="success">Action filter</li>
+        </ul>
+        <h2>Controller Router (OpenEMR\Tests\Unit\ClinicalDecisionRules\ControllerRouter)</h2>
+        <ul>
+            <li class="success">Route with browse list action</li>
+        </ul>
+        <h2>Crypto Gen (OpenEMR\Tests\Unit\Common\Crypto\CryptoGen)</h2>
+        <ul>
+            <li class="success">Constructor</li>
+            <li class="success">Encrypt standard with empty value</li>
+            <li class="success">Encrypt standard with null value</li>
+            <li class="success">Encrypt standard with valid value</li>
+            <li class="success">Encrypt standard with custom password</li>
+            <li class="success">Encrypt standard with database key source</li>
+            <li class="success">Decrypt standard with empty value</li>
+            <li class="success">Decrypt standard with null value</li>
+            <li class="success">Encrypt decrypt round trip</li>
+            <li class="success">Encrypt decrypt round trip with custom password</li>
+            <li class="success">Crypt check standard with valid values</li>
+            <li class="success">Crypt check standard with invalid values</li>
+            <li class="success">Core encrypt without open s s l</li>
+            <li class="success">Core encrypt throws exception for blank key</li>
+            <li class="success">Core decrypt with invalid base 64</li>
+            <li class="success">Aes 256 decrypt two with valid data</li>
+            <li class="success">Aes 256 decrypt mycrypt</li>
+            <li class="success">Aes 256 decrypt mycrypt with mcrypt available</li>
+            <li class="success">Collect crypto key drive source</li>
+            <li class="success">Collect crypto key database source</li>
+            <li class="success">Collect crypto key older versions</li>
+            <li class="success">Format exception message</li>
+            <li class="success">Decrypt standard with versions</li>
+            <li class="success">Key cache property</li>
+            <li class="success">Decrypt with wrong password</li>
+            <li class="success">Large data encryption</li>
+            <li class="success">Special character encryption</li>
+            <li class="success">Binary data encryption</li>
+            <li class="success">Decrypt standard all versions</li>
+            <li class="success">Collect crypto key with existing database key</li>
+            <li class="success">Collect crypto key newer version encryption</li>
+            <li class="success">Hmac validation failure</li>
+            <li class="success">Custom password hmac failure</li>
+            <li class="success">Aes 256 decrypt two hmac failure</li>
+            <li class="success">Decrypt standard error cases</li>
+            <li class="success">Core decrypt error paths</li>
+            <li class="success">Collect crypto key version variations</li>
+            <li class="success">Key cache</li>
+            <li class="success">Empty value encryption decryption</li>
+            <li class="success">Database key creation path</li>
+            <li class="success">Format exception message edge cases</li>
+            <li class="success">Read existing older version keys</li>
+            <li class="success">Read existing newer version keys</li>
+            <li class="success">Corrupted key file handling</li>
+            <li class="success">Mcrypt legacy function</li>
+            <li class="success">Custom password encryption paths</li>
+            <li class="success">All collect crypto key paths</li>
+            <li class="success">Core decrypt custom password path</li>
+            <li class="success">Mcrypt method directly</li>
+            <li class="success">Mcrypt method directly without extension</li>
+            <li class="success">All exception paths</li>
+            <li class="success">Encrypt standard open s s l not loaded</li>
+            <li class="success">Encrypt standard random bytes fail custom password</li>
+            <li class="success">Encrypt standard empty i v</li>
+            <li class="success">Encrypt standard blank result</li>
+            <li class="success">Decrypt standard open s s l not loaded</li>
+            <li class="success">Aes 256 decrypt two open s s l not loaded</li>
+            <li class="success">Aes 256 decrypt one open s s l not loaded</li>
+            <li class="success">Collect crypto key database random bytes failure</li>
+            <li class="success">Collect crypto key drive random bytes failure</li>
+            <li class="success">Collect crypto key database creation failure</li>
+            <li class="success">Collect crypto key database round trip failure</li>
+            <li class="success">Collect crypto key drive file not created</li>
+            <li class="success">Custom pass encrypt hash fail</li>
+            <li class="success">Custom pass decrypt hash fail</li>
+            <li class="success">Custom pass aes two decrypt hash fail</li>
+            <li class="success">Custom pass aes one decrypt hash fail</li>
+            <li class="success">Aes 256 decrypt two with custom password</li>
+            <li class="success">Comparing key versions</li>
+        </ul>
+        <h2>Custom Client Credentials Grant (OpenEMR\Tests\Unit\Common\Auth\OpenIDConnect\Grant\CustomClientCredentialsGrant)</h2>
+        <ul>
+            <li class="success">Valid response for client with registered jwks</li>
+            <li class="success">Valid response for client with jwks uri</li>
+            <li class="success">Invalid response for client with jwks uri</li>
+            <li class="success">Create jwt for keys</li>
+        </ul>
+        <h2>Event Audit Logger (OpenEMR\Tests\Unit\Common\Logging\EventAuditLogger)</h2>
+        <ul>
+            <li class="success">Singleton pattern</li>
+            <li class="success">New event basic</li>
+            <li class="success">New event patient portal</li>
+            <li class="success">Patient portal record log item with all parameters</li>
+            <li class="success">Patient portal parameter handling</li>
+            <li class="success">New event delete lists</li>
+            <li class="success">Event category finder delete operations</li>
+            <li class="success">Record log item without encryption</li>
+            <li class="defect">Record log item with encryption</li>
+            <li class="success">Record log item with api logging</li>
+            <li class="defect">Record log item with encryption and api data</li>
+            <li class="success">Log http request comprehensive coverage</li>
+            <li class="success">Log http request unknown method comprehensive</li>
+            <li class="success">Determine r f c 3881 event action code</li>
+            <li class="success">Determine r f c 3881 event id display name</li>
+            <li class="success">Create rfc 3881 msg</li>
+            <li class="success">Audit s q l event</li>
+            <li class="success">Audit s q l event skips excluded statements</li>
+            <li class="success">Event category finder</li>
+            <li class="success">Event category finder delete lists</li>
+            <li class="success">Event category finder additional tables</li>
+            <li class="success">Is breakglass user</li>
+            <li class="success">Is breakglass user in breakglass group</li>
+            <li class="success">Send atna audit msg disabled basic</li>
+            <li class="success">Send atna audit msg parameters</li>
+            <li class="success">Create tls conn failure</li>
+            <li class="success">Audit s q l audit tamper</li>
+            <li class="success">Audit s q l audit tamper breakglass logging</li>
+            <li class="success">Audit s q l audit tamper custom setting</li>
+            <li class="success">Audit s q l audit tamper disabled</li>
+            <li class="success">Record disclosure</li>
+            <li class="success">Update recorded disclosure</li>
+            <li class="success">Delete disclosure</li>
+            <li class="success">Log http request</li>
+            <li class="success">Log http request disabled</li>
+            <li class="success">Log http request audit disabled</li>
+            <li class="success">Log http request different methods</li>
+            <li class="success">Log http request missing session data</li>
+            <li class="defect">Get events</li>
+            <li class="defect">Get events extended log</li>
+            <li class="defect">Get events with custom columns</li>
+            <li class="defect">Get events with all parameters</li>
+            <li class="defect">Get events with empty parameters</li>
+            <li class="defect">Record log item with audit enabled</li>
+            <li class="defect">New event with audit enabled</li>
+            <li class="defect">Audit s q l event with audit enabled</li>
+            <li class="success">Audit log disabled</li>
+            <li class="success">Breakglass user logging</li>
+            <li class="success">Audit s q l event select query early return</li>
+            <li class="success">Audit s q l event disabled specific event type</li>
+            <li class="success">Null patient id handling</li>
+            <li class="defect">Patient portal success path coverage</li>
+            <li class="defect">Get events with sortby parameter</li>
+            <li class="defect">Get events with sortby parameter set</li>
+            <li class="defect">Get events with direction parameter</li>
+            <li class="success">Send atna audit msg connection handling</li>
+            <li class="defect">Disclosure methods coverage</li>
+            <li class="success">Event category finder additional coverage</li>
+            <li class="success">Create r f c 3881 msg full coverage</li>
+            <li class="success">New event with mocked record log item</li>
+            <li class="defect">New event patient portal with mocked record log item</li>
+            <li class="success">Patient portal menu array logic</li>
+            <li class="defect">New event patient portal path</li>
+            <li class="success">Log http request disabled audit logging</li>
+            <li class="success">Log http request disabled http request logging</li>
+            <li class="success">Log http request get request</li>
+            <li class="success">Log http request post request</li>
+            <li class="success">Log http request delete request</li>
+            <li class="success">Log http request unknown method</li>
+            <li class="success">Log http request put request</li>
+            <li class="success">Log http request patch request</li>
+            <li class="success">Log http request parameterized with data set "GET request"</li>
+            <li class="success">Log http request parameterized with data set "POST request"</li>
+            <li class="success">Log http request parameterized with data set "DELETE request"</li>
+            <li class="success">Log http request parameterized with data set "PUT request"</li>
+            <li class="success">Log http request parameterized with data set "PATCH request"</li>
+            <li class="success">Log http request parameterized with data set "Unsupported TRACE request"</li>
+            <li class="success">Send atna audit msg disabled</li>
+            <li class="success">Send atna audit msg no host</li>
+            <li class="success">Send atna audit msg connection failure</li>
+            <li class="success">Send atna audit msg with proper configuration</li>
+            <li class="success">Create tls conn using reflection</li>
+            <li class="success">Create rfc 3881 msg using reflection</li>
+            <li class="success">Send atna audit msg integration with reflection</li>
+            <li class="success">Send atna audit msg successful connection with reflection</li>
+            <li class="success">Send atna audit msg successful connection with p h p unit mock</li>
+        </ul>
+        <h2>Export Job (OpenEMR\Tests\Unit\FHIR\Export\ExportJob)</h2>
+        <ul>
+            <li class="success">Set status</li>
+            <li class="success">Set status invalid throws exception</li>
+            <li class="success">Is complete</li>
+            <li class="success">Set output</li>
+            <li class="success">Set output invalid throws exception</li>
+        </ul>
+        <h2>Export Memory Stream Writer (OpenEMR\Tests\Unit\FHIR\Export\ExportMemoryStreamWriter)</h2>
+        <ul>
+            <li class="success">Append</li>
+        </ul>
+        <h2>Form Vitals (OpenEMR\Tests\Unit\Common\Forms\FormVitals)</h2>
+        <ul>
+            <li class="success">construct</li>
+            <li class="success">Set details for column</li>
+            <li class="success">Persist</li>
+            <li class="success">Persist vitals with details</li>
+            <li class="success">Persist vitals with details interpretation</li>
+            <li class="success">Populate array</li>
+        </ul>
+        <h2>Http Rest Parsed Route (OpenEMR\Tests\Unit\Common\Http\HttpRestParsedRoute)</h2>
+        <ul>
+            <li class="success">Get resource</li>
+            <li class="success">Get resource with operation</li>
+            <li class="success">Get resource with root operation</li>
+            <li class="success">Get resource with document binary format</li>
+            <li class="success">Is operation</li>
+            <li class="success">Is operation with resource</li>
+            <li class="success">Metadata route</li>
+            <li class="success">Get operation with root operation</li>
+            <li class="success">Get operation with patient export operation</li>
+            <li class="success">Get route with route param special character</li>
+        </ul>
+        <h2>Logo Service (OpenEMR\Tests\Unit\Services\LogoService)</h2>
+        <ul>
+            <li class="success">Logo event can override logo path</li>
+        </ul>
+        <h2>Number To Text (OpenEMR\Tests\Unit\NumberToText)</h2>
+        <ul>
+            <li class="success">Convert with data set #0</li>
+            <li class="success">Convert with data set #1</li>
+            <li class="success">Convert with data set #2</li>
+            <li class="success">Convert with data set #3</li>
+            <li class="success">Convert with data set #4</li>
+            <li class="success">Convert with data set #5</li>
+            <li class="success">Convert with data set #6</li>
+            <li class="success">Convert with data set #7</li>
+        </ul>
+        <h2>Password Verify (OpenEMR\Tests\Unit\PasswordVerify)</h2>
+        <ul>
+            <li class="success">Blank password</li>
+            <li class="success">Blank hash</li>
+            <li class="success">Blank password and hash</li>
+            <li class="success">Malformed hash</li>
+            <li class="success">Legacy bcrypt correct password one</li>
+            <li class="success">Legacy bcrypt incorrect password one</li>
+            <li class="success">Legacy bcrypt correct password two</li>
+            <li class="success">Legacy bcrypt incorrect password two</li>
+            <li class="success">Legacy bcrypt correct password three</li>
+            <li class="success">Legacy bcrypt incorrect password three</li>
+            <li class="success">Standard bcrypt correct password one</li>
+            <li class="success">Standard bcrypt incorrect password one</li>
+            <li class="success">Standard bcrypt correct password two</li>
+            <li class="success">Standard bcrypt incorrect password two</li>
+            <li class="success">Standard bcrypt correct password three</li>
+            <li class="success">Standard bcrypt incorrect password three</li>
+            <li class="success">Standard argon 2i correct password one</li>
+            <li class="success">Standard argon 2i incorrect password one</li>
+            <li class="success">Standard argon 2i correct password two</li>
+            <li class="success">Standard argon 2i incorrect password two</li>
+            <li class="success">Standard argon 2i correct password three</li>
+            <li class="success">Standard argon 2i incorrect password three</li>
+            <li class="success">Standard argon 2id correct password one</li>
+            <li class="success">Standard argon 2id incorrect password one</li>
+            <li class="success">Standard argon 2id correct password two</li>
+            <li class="success">Standard argon 2id incorrect password two</li>
+            <li class="success">Standard argon 2id correct password three</li>
+            <li class="success">Standard argon 2id incorrect password three</li>
+            <li class="success">Standard sha 512 correct password one</li>
+            <li class="success">Standard sha 512 incorrect password one</li>
+            <li class="success">Standard sha 512 correct password two</li>
+            <li class="success">Standard sha 512 incorrect password two</li>
+            <li class="success">Standard sha 512 correct password three</li>
+            <li class="success">Standard sha 512 incorrect password three</li>
+        </ul>
+        <h2>Predictive DSIService Entity (OpenEMR\Tests\Unit\FHIR\SMART\ExternalClinicalDecisionSupport\PredictiveDSIServiceEntity)</h2>
+        <ul>
+            <li class="success">Populate service with fhir questionnaire</li>
+        </ul>
+        <h2>Route Controller (OpenEMR\Tests\Unit\FHIR\SMART\ExternalClinicalDecisionSupport\RouteController)</h2>
+        <ul>
+            <li class="success">Supports request</li>
+            <li class="success">Parse request</li>
+            <li class="success">Dispatch</li>
+            <li class="success">Save action</li>
+        </ul>
+        <h2>SMARTLaunch Token (OpenEMR\Tests\Unit\FHIR\SMART\SMARTLaunchToken)</h2>
+        <ul>
+            <li class="success">Constructor</li>
+            <li class="success">Deserialize token</li>
+        </ul>
+        <h2>Sanitize Multi Byte Case Insensitive String Equals (OpenEMR\Tests\Unit\library\SanitizeMultiByteCaseInsensitiveStringEquals)</h2>
+        <ul>
+            <li class="success">Identical strings</li>
+            <li class="success">Composed characters</li>
+            <li class="success">Decomposed characters</li>
+            <li class="success">Case insensitivity</li>
+            <li class="success">Different strings</li>
+            <li class="success">Empty strings</li>
+            <li class="success">Large strings</li>
+        </ul>
+        <h2>Scope Repository (OpenEMR\Tests\Unit\Common\Auth\OpenIDConnect\Repositories\ScopeRepository)</h2>
+        <ul>
+            <li class="success">Has fhir api scopes</li>
+            <li class="success">Has standard api scopes</li>
+            <li class="success">Build scope validator array for standard api scope request</li>
+            <li class="success">Build scope validator array for standard portal api scope request</li>
+            <li class="success">Build scope validator array default returns fhir scopes</li>
+            <li class="success">Get scope entity by identifier has export operations</li>
+        </ul>
+        <h2>Uuid Mapping Events Subscriber (OpenEMR\Tests\Unit\ZendModules\FHIR\Listener\UuidMappingEventsSubscriber)</h2>
+        <ul>
+            <li class="success">On service post save event for vitals</li>
+            <li class="success">On service post save event for social history</li>
+        </ul>
+        <h2>Validation Utils (OpenEMR\Tests\Unit\Common\Utils\ValidationUtils)</h2>
+        <ul>
+            <li class="success">Is valid email accepts valid emails</li>
+        </ul>
+    </body>
+</html>

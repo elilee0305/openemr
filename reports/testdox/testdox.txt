@@ -1,0 +1,316 @@
+Acl Main (OpenEMR\Tests\Unit\Common\Acl\AclMain)
+ [x] Acl check core
+
+Action Router (OpenEMR\Tests\Unit\ClinicalDecisionRules\ActionRouter)
+ [x] Route with browse list action
+ [x] Forward behavior
+ [x] Redirect behavior
+
+Client Admin Controller (OpenEMR\Tests\Unit\FHIR\SMART\ClientAdminController)
+ [x] Dispatch
+ [x] Dispatch with external c d r
+
+Client Entity (OpenEMR\Tests\Unit\Common\Auth\OpenIDConnect\Entities\ClientEntity)
+ [x] Has scope
+
+Common (OpenEMR\Tests\Unit\ClinicalDecisionRules\Common)
+ [x] Implode funcs
+ [x] Get
+ [x] Post
+ [x] Base url
+ [x] Src dir
+ [x] Base dir
+ [x] Library dir
+ [x] Library src
+
+Controller Edit (OpenEMR\Tests\Unit\ClinicalDecisionRules\ControllerEdit)
+ [x] Action summary
+ [x] Action submit summary with new rule
+ [x] Action intervals
+ [ ] Action submit intervals
+ [x] Action filter
+
+Controller Router (OpenEMR\Tests\Unit\ClinicalDecisionRules\ControllerRouter)
+ [x] Route with browse list action
+
+Crypto Gen (OpenEMR\Tests\Unit\Common\Crypto\CryptoGen)
+ [x] Constructor
+ [x] Encrypt standard with empty value
+ [x] Encrypt standard with null value
+ [x] Encrypt standard with valid value
+ [x] Encrypt standard with custom password
+ [x] Encrypt standard with database key source
+ [x] Decrypt standard with empty value
+ [x] Decrypt standard with null value
+ [x] Encrypt decrypt round trip
+ [x] Encrypt decrypt round trip with custom password
+ [x] Crypt check standard with valid values
+ [x] Crypt check standard with invalid values
+ [x] Core encrypt without open s s l
+ [x] Core encrypt throws exception for blank key
+ [x] Core decrypt with invalid base 64
+ [x] Aes 256 decrypt two with valid data
+ [x] Aes 256 decrypt mycrypt
+ [x] Aes 256 decrypt mycrypt with mcrypt available
+ [x] Collect crypto key drive source
+ [x] Collect crypto key database source
+ [x] Collect crypto key older versions
+ [x] Format exception message
+ [x] Decrypt standard with versions
+ [x] Key cache property
+ [x] Decrypt with wrong password
+ [x] Large data encryption
+ [x] Special character encryption
+ [x] Binary data encryption
+ [x] Decrypt standard all versions
+ [x] Collect crypto key with existing database key
+ [x] Collect crypto key newer version encryption
+ [x] Hmac validation failure
+ [x] Custom password hmac failure
+ [x] Aes 256 decrypt two hmac failure
+ [x] Decrypt standard error cases
+ [x] Core decrypt error paths
+ [x] Collect crypto key version variations
+ [x] Key cache
+ [x] Empty value encryption decryption
+ [x] Database key creation path
+ [x] Format exception message edge cases
+ [x] Read existing older version keys
+ [x] Read existing newer version keys
+ [x] Corrupted key file handling
+ [x] Mcrypt legacy function
+ [x] Custom password encryption paths
+ [x] All collect crypto key paths
+ [x] Core decrypt custom password path
+ [x] Mcrypt method directly
+ [x] Mcrypt method directly without extension
+ [x] All exception paths
+ [x] Encrypt standard open s s l not loaded
+ [x] Encrypt standard random bytes fail custom password
+ [x] Encrypt standard empty i v
+ [x] Encrypt standard blank result
+ [x] Decrypt standard open s s l not loaded
+ [x] Aes 256 decrypt two open s s l not loaded
+ [x] Aes 256 decrypt one open s s l not loaded
+ [x] Collect crypto key database random bytes failure
+ [x] Collect crypto key drive random bytes failure
+ [x] Collect crypto key database creation failure
+ [x] Collect crypto key database round trip failure
+ [x] Collect crypto key drive file not created
+ [x] Custom pass encrypt hash fail
+ [x] Custom pass decrypt hash fail
+ [x] Custom pass aes two decrypt hash fail
+ [x] Custom pass aes one decrypt hash fail
+ [x] Aes 256 decrypt two with custom password
+ [x] Comparing key versions
+
+Custom Client Credentials Grant (OpenEMR\Tests\Unit\Common\Auth\OpenIDConnect\Grant\CustomClientCredentialsGrant)
+ [x] Valid response for client with registered jwks
+ [x] Valid response for client with jwks uri
+ [x] Invalid response for client with jwks uri
+ [x] Create jwt for keys
+
+Event Audit Logger (OpenEMR\Tests\Unit\Common\Logging\EventAuditLogger)
+ [x] Singleton pattern
+ [x] New event basic
+ [x] New event patient portal
+ [x] Patient portal record log item with all parameters
+ [x] Patient portal parameter handling
+ [x] New event delete lists
+ [x] Event category finder delete operations
+ [x] Record log item without encryption
+ [x] Record log item with encryption
+ [x] Record log item with api logging
+ [x] Record log item with encryption and api data
+ [x] Log http request comprehensive coverage
+ [x] Log http request unknown method comprehensive
+ [x] Determine r f c 3881 event action code
+ [x] Determine r f c 3881 event id display name
+ [x] Create rfc 3881 msg
+ [x] Audit s q l event
+ [x] Audit s q l event skips excluded statements
+ [x] Event category finder
+ [x] Event category finder delete lists
+ [x] Event category finder additional tables
+ [x] Is breakglass user
+ [x] Is breakglass user in breakglass group
+ [x] Send atna audit msg disabled basic
+ [x] Send atna audit msg parameters
+ [x] Create tls conn failure
+ [x] Audit s q l audit tamper
+ [x] Audit s q l audit tamper breakglass logging
+ [x] Audit s q l audit tamper custom setting
+ [x] Audit s q l audit tamper disabled
+ [x] Record disclosure
+ [x] Update recorded disclosure
+ [x] Delete disclosure
+ [x] Log http request
+ [x] Log http request disabled
+ [x] Log http request audit disabled
+ [x] Log http request different methods
+ [x] Log http request missing session data
+ [x] Get events
+ [x] Get events extended log
+ [x] Get events with custom columns
+ [x] Get events with all parameters
+ [x] Get events with empty parameters
+ [x] Record log item with audit enabled
+ [x] New event with audit enabled
+ [x] Audit s q l event with audit enabled
+ [x] Audit log disabled
+ [x] Breakglass user logging
+ [x] Audit s q l event select query early return
+ [x] Audit s q l event disabled specific event type
+ [x] Null patient id handling
+ [x] Patient portal success path coverage
+ [x] Get events with sortby parameter
+ [x] Get events with sortby parameter set
+ [x] Get events with direction parameter
+ [x] Send atna audit msg connection handling
+ [x] Disclosure methods coverage
+ [x] Event category finder additional coverage
+ [x] Create r f c 3881 msg full coverage
+ [x] New event with mocked record log item
+ [x] New event patient portal with mocked record log item
+ [x] Patient portal menu array logic
+ [x] New event patient portal path
+ [x] Log http request disabled audit logging
+ [x] Log http request disabled http request logging
+ [x] Log http request get request
+ [x] Log http request post request
+ [x] Log http request delete request
+ [x] Log http request unknown method
+ [x] Log http request put request
+ [x] Log http request patch request
+ [x] Log http request parameterized with data set "GET request"
+ [x] Log http request parameterized with data set "POST request"
+ [x] Log http request parameterized with data set "DELETE request"
+ [x] Log http request parameterized with data set "PUT request"
+ [x] Log http request parameterized with data set "PATCH request"
+ [x] Log http request parameterized with data set "Unsupported TRACE request"
+ [x] Send atna audit msg disabled
+ [x] Send atna audit msg no host
+ [x] Send atna audit msg connection failure
+ [x] Send atna audit msg with proper configuration
+ [x] Create tls conn using reflection
+ [x] Create rfc 3881 msg using reflection
+ [x] Send atna audit msg integration with reflection
+ [x] Send atna audit msg successful connection with reflection
+ [x] Send atna audit msg successful connection with p h p unit mock
+
+Export Job (OpenEMR\Tests\Unit\FHIR\Export\ExportJob)
+ [x] Set status
+ [x] Set status invalid throws exception
+ [x] Is complete
+ [x] Set output
+ [x] Set output invalid throws exception
+
+Export Memory Stream Writer (OpenEMR\Tests\Unit\FHIR\Export\ExportMemoryStreamWriter)
+ [x] Append
+
+Form Vitals (OpenEMR\Tests\Unit\Common\Forms\FormVitals)
+ [x] construct
+ [x] Set details for column
+ [x] Persist
+ [x] Persist vitals with details
+ [x] Persist vitals with details interpretation
+ [x] Populate array
+
+Http Rest Parsed Route (OpenEMR\Tests\Unit\Common\Http\HttpRestParsedRoute)
+ [x] Get resource
+ [x] Get resource with operation
+ [x] Get resource with root operation
+ [x] Get resource with document binary format
+ [x] Is operation
+ [x] Is operation with resource
+ [x] Metadata route
+ [x] Get operation with root operation
+ [x] Get operation with patient export operation
+ [x] Get route with route param special character
+
+Logo Service (OpenEMR\Tests\Unit\Services\LogoService)
+ [x] Logo event can override logo path
+
+Number To Text (OpenEMR\Tests\Unit\NumberToText)
+ [x] Convert with data set #0
+ [x] Convert with data set #1
+ [x] Convert with data set #2
+ [x] Convert with data set #3
+ [x] Convert with data set #4
+ [x] Convert with data set #5
+ [x] Convert with data set #6
+ [x] Convert with data set #7
+
+Password Verify (OpenEMR\Tests\Unit\PasswordVerify)
+ [x] Blank password
+ [x] Blank hash
+ [x] Blank password and hash
+ [x] Malformed hash
+ [x] Legacy bcrypt correct password one
+ [x] Legacy bcrypt incorrect password one
+ [x] Legacy bcrypt correct password two
+ [x] Legacy bcrypt incorrect password two
+ [x] Legacy bcrypt correct password three
+ [x] Legacy bcrypt incorrect password three
+ [x] Standard bcrypt correct password one
+ [x] Standard bcrypt incorrect password one
+ [x] Standard bcrypt correct password two
+ [x] Standard bcrypt incorrect password two
+ [x] Standard bcrypt correct password three
+ [x] Standard bcrypt incorrect password three
+ [x] Standard argon 2i correct password one
+ [x] Standard argon 2i incorrect password one
+ [x] Standard argon 2i correct password two
+ [x] Standard argon 2i incorrect password two
+ [x] Standard argon 2i correct password three
+ [x] Standard argon 2i incorrect password three
+ [x] Standard argon 2id correct password one
+ [x] Standard argon 2id incorrect password one
+ [x] Standard argon 2id correct password two
+ [x] Standard argon 2id incorrect password two
+ [x] Standard argon 2id correct password three
+ [x] Standard argon 2id incorrect password three
+ [x] Standard sha 512 correct password one
+ [x] Standard sha 512 incorrect password one
+ [x] Standard sha 512 correct password two
+ [x] Standard sha 512 incorrect password two
+ [x] Standard sha 512 correct password three
+ [x] Standard sha 512 incorrect password three
+
+Predictive DSIService Entity (OpenEMR\Tests\Unit\FHIR\SMART\ExternalClinicalDecisionSupport\PredictiveDSIServiceEntity)
+ [x] Populate service with fhir questionnaire
+
+Route Controller (OpenEMR\Tests\Unit\FHIR\SMART\ExternalClinicalDecisionSupport\RouteController)
+ [x] Supports request
+ [x] Parse request
+ [x] Dispatch
+ [x] Save action
+
+SMARTLaunch Token (OpenEMR\Tests\Unit\FHIR\SMART\SMARTLaunchToken)
+ [x] Constructor
+ [x] Deserialize token
+
+Sanitize Multi Byte Case Insensitive String Equals (OpenEMR\Tests\Unit\library\SanitizeMultiByteCaseInsensitiveStringEquals)
+ [x] Identical strings
+ [x] Composed characters
+ [x] Decomposed characters
+ [x] Case insensitivity
+ [x] Different strings
+ [x] Empty strings
+ [x] Large strings
+
+Scope Repository (OpenEMR\Tests\Unit\Common\Auth\OpenIDConnect\Repositories\ScopeRepository)
+ [x] Has fhir api scopes
+ [x] Has standard api scopes
+ [x] Build scope validator array for standard api scope request
+ [x] Build scope validator array for standard portal api scope request
+ [x] Build scope validator array default returns fhir scopes
+ [x] Get scope entity by identifier has export operations
+
+Uuid Mapping Events Subscriber (OpenEMR\Tests\Unit\ZendModules\FHIR\Listener\UuidMappingEventsSubscriber)
+ [x] On service post save event for vitals
+ [x] On service post save event for social history
+
+Validation Utils (OpenEMR\Tests\Unit\Common\Utils\ValidationUtils)
+ [x] Is valid email accepts valid emails
+
