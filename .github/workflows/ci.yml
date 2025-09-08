@@ -20,6 +20,9 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
+      - name: Check Java Version
+        run: java -version
+
       - name: Build with Gradle
         run: gradle build
 
