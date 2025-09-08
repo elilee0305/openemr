@@ -1,12 +1,11 @@
 plugins {
     id 'java'
-    id 'jacoco'
 }
 
 sourceSets {
     test {
         java {
-            srcDirs = ['C:/Users/USER/OneDrive/Desktop/UTAR/SCC/Assignment2/openemr/tests/Tests/Unit']
+            srcDirs = ['openemr/tests/Tests/Unit']
         }
     }
 }
