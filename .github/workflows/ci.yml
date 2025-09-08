@@ -28,11 +28,11 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        working-directory: .github/workflows
+        working-directory: .
 
       - name: Build & Run Tests with Coverage
         run: ./gradlew clean build test jacocoTestReport
-        working-directory: .github/workflows
+        working-directory: 
 
       - name: Upload JaCoCo Report
         uses: actions/upload-artifact@v4
