@@ -1,12 +1,7 @@
 plugins {
     id 'java'
-    id 'jacoco'
 }
 
-
-jacoco {
-    toolVersion = "0.8.11" 
-}
 
 sourceSets {
     test {
@@ -18,14 +13,4 @@ sourceSets {
 
 test {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
-
-jacocoTestReport {
-    dependsOn test // tests need to run before generating report
-    reports {
-        xml.required = true
-        html.required = true
-        csv.required = false
-    }
 }
