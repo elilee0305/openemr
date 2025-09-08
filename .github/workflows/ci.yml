@@ -10,6 +10,22 @@ jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: openemr
+          MYSQL_USER: openemr
+          MYSQL_PASSWORD: openemr
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uopenemr -popenemr"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,17 +33,27 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'   # Change version if OpenEMR needs a different one
+          php-version: '8.2'
           extensions: mbstring, pdo_mysql, intl
           coverage: xdebug
-
-      - name: Check PHP Version
-        run: php -v
 
       - name: Install Composer Dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
+      - name: Wait for MySQL
+        run: |
+          until mysql -h 127.0.0.1 -P 3306 -uopenemr -popenemr -e "SELECT 1" openemr; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+
       - name: Run Unit Tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: openemr
+          DB_PASS: openemr
+          DB_NAME: openemr
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload Coverage Report
@@ -35,12 +61,3 @@ jobs:
         with:
           name: php-coverage-report
           path: coverage.xml
-
-      - name: Build Docker Image
-        run: docker build -t opennmr-assignment .
-
-      - name: Run Docker Container
-        run: docker run -d -p 8080:80 --name opennmr-assignment-container opennmr-assignment
-
-      - name: Verify Docker Container
-        run: docker ps
