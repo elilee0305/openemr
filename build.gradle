@@ -4,3 +4,17 @@
  * This is a general purpose Gradle build.
  * Learn more about Gradle by exploring our samples at https://docs.gradle.org/7.1.1/samples
  */
+apply plugin: 'java'
+
+sourceSets {
+    test {
+        java {
+            // Your actual test folder
+            srcDirs = ['C:/Users/USER/OneDrive/Desktop/UTAR/SCC/Assignment2/openemr/tests/Tests/Unit']
+        }
+    }
+}
+
+test {
+    useJUnitPlatform() // if using JUnit 5
+}
