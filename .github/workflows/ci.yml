@@ -28,6 +28,7 @@ jobs:
 
       - name: Build & Run Tests with Coverage
         run: ./gradlew clean build test jacocoTestReport
+        working-directory: .github/workflows
 
       - name: Upload JaCoCo Report
         uses: actions/upload-artifact@v4
