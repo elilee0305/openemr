@@ -32,12 +32,6 @@ jobs:
       - name: Generate Code Coverage
         run: gradle jacocoTestReport
 
-      - name: Upload JaCoCo Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: jacoco-report
-          path: build/reports/jacoco/test/html
-
       - name: Build Docker Image
         run: docker build -t opennmr-assignment .
 
