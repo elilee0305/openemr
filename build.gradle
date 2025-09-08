@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['C:/Users/USER/OneDrive/Desktop/UTAR/SCC/Assignment2/openemr/tests/Tests/Unit']
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
