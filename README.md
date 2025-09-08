@@ -44,16 +44,83 @@ Check out [DOCKER_README.md](DOCKER_README.md)
 
 Check out [FHIR_README.md](FHIR_README.md)
 
-### For Developers
 
-If using OpenEMR directly from the code repository, then the following commands will build OpenEMR (Node.js version 22.* is required) :
+## Getting Started with OpenEMR
 
-```shell
-composer install --no-dev
+Welcome to OpenEMR! This section will guide you through the process of setting up your development environment, installing dependencies, building the application, running tests, and deploying with Docker. Whether you are a new contributor or an experienced developer, these instructions are designed to help you get up and running quickly and efficiently.
+
+You will learn how to:
+
+- Prepare your system with the required tools and software
+- Clone the OpenEMR repository and install all necessary dependencies
+- Build and optimize the frontend and backend components
+- Run automated tests and generate code coverage reports
+- Deploy OpenEMR using Docker for a seamless local or production setup
+
+By following these steps, you will have a fully functional OpenEMR environment ready for development, testing, or evaluation. For more advanced configuration and troubleshooting, please refer to the documentation links provided throughout this README.
+
+### Prerequisites
+
+- PHP 8.1 or higher
+- Composer
+- Node.js v22.x and NPM
+- Docker (for containerized deployment)
+
+---
+
+### Installation
+
+```powershell
+# Clone the repository
+git clone https://github.com/openemr/openemr.git
+
+# Navigate to the project directory
+cd openemr
+
+# Install PHP dependencies
+composer install
+
+# Install JavaScript packages
 npm install
+```
+
+---
+
+### Build Frontend Assets
+
+```powershell
 npm run build
+```
+
+---
+
+### Optimize Composer Autoload
+
+```powershell
 composer dump-autoload -o
 ```
+
+---
+
+### Running Tests & Generating Coverage
+
+To run PHPUnit tests and generate an HTML coverage report (requires Xdebug):
+```powershell
+vendor\bin\phpunit --coverage-html build/coverage-html
+```
+The coverage report will be available in the `build/coverage-html` directory.
+
+---
+
+### Docker Deployment
+
+To build and run OpenEMR using Docker:
+```powershell
+docker compose up --build
+```
+Refer to [DOCKER_README.md](DOCKER_README.md) for advanced Docker usage and configuration.
+
+---
 
 ### Contributors
 
