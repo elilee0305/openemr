@@ -1,11 +1,10 @@
-
 name: OpenEMR CI Setup Workflows
 
 on:
   push:
-    branches: [ master]
+    branches: [ master ]
   pull_request:
-    branches: [ master]
+    branches: [ master ]
 
 jobs:
   test:
@@ -19,6 +18,8 @@ jobs:
         ports:
           - 3306:3306
         options: >-
+          --default-authentication-plugin=mysql_native_password
+          --sql-mode="NO_ENGINE_SUBSTITUTION"
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
@@ -26,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.1', '8.2']
+        php: ['8.3', '8.2']
 
     steps:
       - name: Checkout code
@@ -52,9 +53,21 @@ jobs:
       - name: Create MySQL test database
         run: mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
-      - name: Import test database
-        run: | # Disable strict mode temporarily
-          mysql -h127.0.0.1 -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+      - name: Create sqlconf.php for CI
+        run: |
+          mkdir -p sites/default
+          echo "<?php
+          $GLOBALS['adodb_new_link'] = 1;
+          $GLOBALS['adodb_logsql'] = true;
+          $host='127.0.0.1';
+          $port=3306;
+          $dbname='openemr_test';
+          $username='root';
+          $password='root';
+          ?>" > sites/default/sqlconf.php
+
+      - name: Import OpenEMR test database
+        run: |
           mysql -h127.0.0.1 -uroot -proot openemr_test < sql/database.sql
 
       - name: Run PHPUnit tests
