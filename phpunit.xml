@@ -41,6 +41,8 @@ testdox="false">
   <logging>
       <!-- JUnit XML Report -->
       <junit outputFile="reports/junit/report.xml"/>
+      <phpunit bootstrap="tests/bootstrap-isolated.php">
+
 
       <!-- Testdox (Readable Text or HTML Report) -->
       <testdoxHtml outputFile="reports/testdox/testdox.html"/>
