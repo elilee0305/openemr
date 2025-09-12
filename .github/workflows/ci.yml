@@ -41,36 +41,50 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Wait for MySQL to be ready
+      - name: Determine MySQL host
         run: |
-          echo "Waiting for MySQL service..."
+          # GitHub Actions service hostname is the service name
+          MYSQL_HOST=mysql
+          MYSQL_PORT=3306
+          echo "MYSQL_HOST=$MYSQL_HOST" >> $GITHUB_ENV
+          echo "MYSQL_PORT=$MYSQL_PORT" >> $GITHUB_ENV
+          echo "MYSQL_ROOT_PASSWORD=root" >> $GITHUB_ENV
+          echo "MySQL host set to $MYSQL_HOST:$MYSQL_PORT"
+
+      - name: Wait for MySQL service to be ready
+        run: |
+          echo "Waiting for MySQL at $MYSQL_HOST:$MYSQL_PORT..."
           for i in {1..30}; do
-            mysqladmin ping -hmysql -uroot -proot &> /dev/null && break
+            if mysqladmin ping -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot &> /dev/null; then
+              echo "MySQL is ready!"
+              break
+            fi
             echo "Waiting 1s..."
             sleep 1
           done
 
+      - name: Debug MySQL connectivity
+        run: |
+          echo "Checking MySQL container and host resolution..."
+          echo "Environment variables:"
+          env | grep MYSQL
+          echo "Ping MySQL container hostname '$MYSQL_HOST':"
+          ping -c 4 $MYSQL_HOST || echo "Ping failed: host may be unreachable from the runner"
+          echo "Try connecting with mysqladmin:"
+          mysqladmin ping -h $MYSQL_HOST -uroot -proot || echo "mysqladmin cannot reach '$MYSQL_HOST'"
+          echo "Check service container status (limited in GitHub runners):"
+          docker ps || echo "Docker not available in this runner"
+          echo "If MySQL is unreachable, check the service name and ports in your workflow."
+
       - name: Create MySQL test database and disable strict mode
         run: |
-          mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
-          mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
-
-      - name: Debug MySQL host connectivity
-        run: |
-            echo "Checking MySQL service container..."
-            echo "Environment variables:"
-            env | grep MYSQL
-            echo "Ping MySQL container hostname 'mysql':"
-            ping -c 4 mysql || echo "Ping failed"
-            echo "Try connecting with mysqladmin:"
-            mysqladmin ping -h mysql -uroot -proot || echo "mysqladmin cannot reach 'mysql'"
-            echo "List running Docker containers (if available):"
-                docker ps || echo "Docker not available in this runner"
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
 
       - name: Import OpenEMR test database
         run: |
           if [ -f sql/database.sql ]; then
-            mysql -hmysql -uroot -proot openemr_test < sql/database.sql
+            mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot openemr_test < sql/database.sql
           else
             echo "sql/database.sql not found. Skipping import."
           fi
