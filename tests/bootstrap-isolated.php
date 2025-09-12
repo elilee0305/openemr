@@ -4,6 +4,11 @@ declare(strict_types=1);
 // Disable database for isolated tests
 $GLOBALS['disable_database_connection'] = true;
 
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Only declare mocks if they aren't already defined
 if (!function_exists('sqlStatementNoLog')) {
     function sqlStatementNoLog($sql, $params = []) {
