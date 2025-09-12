@@ -1,4 +1,4 @@
-name: OpenEMR CI Setup Workflows
+name: OpenEMR CI Setup Workflow
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    # Use MySQL as a service; GitHub Actions automatically waits until it's healthy
     services:
       mysql:
         image: mysql:8.0
@@ -18,7 +20,7 @@ jobs:
           MYSQL_ROOT_HOST: '%'
         options: >-
           --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
+          --health-interval=5s
           --health-timeout=5s
           --health-retries=10
 
@@ -27,9 +29,11 @@ jobs:
         php: ['8.3', '8.2']
 
     steps:
+      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up PHP
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -37,33 +41,46 @@ jobs:
           extensions: mbstring, intl, curl, xml, json, mysqli
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
+      # Install Composer dependencies
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      # Create MySQL test database (service hostname is available automatically)
       - name: Create MySQL test database
-        run: mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+        run: |
+          mysql -h ${{ job.services.mysql.host }} -P ${{ job.services.mysql.port }} \
+            -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
-      - name: Disable strict mode for MySQL
-        run: mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+      # Disable strict mode
+      - name: Disable strict mode
+        run: |
+          mysql -h ${{ job.services.mysql.host }} -P ${{ job.services.mysql.port }} \
+            -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
 
+      # Create sqlconf.php for CI
       - name: Create sqlconf.php for CI
         run: |
           mkdir -p sites/default
           echo "<?php
           \$GLOBALS['adodb_new_link'] = 1;
           \$GLOBALS['adodb_logsql'] = true;
-          \$host='mysql';
-          \$port=3306;
+          \$host='${{ job.services.mysql.host }}';
+          \$port=${{ job.services.mysql.port }};
           \$dbname='openemr_test';
           \$username='root';
           \$password='root';
           ?>" > sites/default/sqlconf.php
 
+      # Import OpenEMR test database
       - name: Import OpenEMR test database
-        run: mysql -hmysql -uroot -proot openemr_test < sql/database.sql
+        run: |
+          mysql -h ${{ job.services.mysql.host }} -P ${{ job.services.mysql.port }} \
+            -uroot -proot openemr_test < sql/database.sql
 
+      # Run PHPUnit tests
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --configuration phpunit.xml
 
-      - name: Run PHP Code Sniffer (optional)
+      # Run PHP Code Sniffer (optional)
+      - name: Run PHP Code Sniffer
         run: vendor/bin/phpcs --standard=PSR12 controllers library
