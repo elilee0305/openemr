@@ -1,90 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<project name="OpenEMR" description="OpenEMR build automation" default="build" basedir=".">
 
-<project name="OpenEMR"
-         description="OpenEMR is a Free and Open Source electronic health records and medical practice management application"
-         default="dist" basedir=".">
+    <!-- Directories & tools -->
+    <property name="build.dir" value="build"/>
+    <property name="report.dir" value="${build.dir}/report"/>
+    <property name="stage.dir" value="${build.dir}/staging"/>
+    <property name="manifest.file" value="${build.dir}/BUILD-MANIFEST.json"/>
+    <property name="artifact.sha256" value="${build.dir}/openemr-artifact.sha256"/>
+    <property name="composer.cmd" value="composer"/>
+    <property name="npm.cmd" value="npm"/>
+    <property name="artifact.base" value="openemr-artifact"/>
+    <property name="artifact.name" value="${artifact.base}.phar"/>
+    <property name="php.cmd" value="php"/>
 
-    <property name="dir.src" value="${project.basedir}"/>
-    <property name="dir.vendor" value="${project.basedir}/vendor"/>
-    <property name="dir.assets" value="${project.basedir}/public/assets"/>
-
-    <target name="vendor-clean">
-        <echo msg="Trying to clean up vendor dir"/>
-        <phingcall target="clean-vendor-dir">
-        </phingcall>
+    <!-- Clean previous build -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete file="${artifact.name}"/>
+        <echo msg="Previous build cleaned"/>
     </target>
 
-    <target name="assets-clean">
-        <echo msg="Trying to clean up assets dir"/>
-        <phingcall target="clean-assets-dir">
-        </phingcall>
+    <!-- Initialize build directories -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${report.dir}"/>
+        <mkdir dir="${stage.dir}"/>
+        <echo msg="Build directories created"/>
     </target>
 
-
-    <target name="clean-vendor-dir">
-        <!-- Delete git files from vendor  -->
-        <delete verbose="true">
-            <fileset dir="${dir.vendor}" includes="**/*.git*" defaultexcludes="false"/>
-            <fileset dir="${dir.vendor}" includes="**/*.cvs*" defaultexcludes="false"/>
-        </delete>
-
-        <delete dir="${dir.vendor}/adldap2/adldap2/docs" verbose="true"/>
-        <delete dir="${dir.vendor}/adodb/adodb-php/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/adodb/adodb-php/docs" verbose="true"/>
-        <delete dir="${dir.vendor}/container-interop/container-interop/docs" verbose="true"/>
-        <delete dir="${dir.vendor}/ezyang/htmlpurifier/test" verbose="true"/>
-        <delete dir="${dir.vendor}/ezyang/htmlpurifier/maintenance" verbose="true"/>
-        <delete dir="${dir.vendor}/ezyang/htmlpurifier/plugins" verbose="true"/>
-        <delete dir="${dir.vendor}/illuminate/support/Testing" verbose="true"/>
-        <delete dir="${dir.vendor}/knplabs/knp-snappy/doc" verbose="true"/>
-        <delete dir="${dir.vendor}/markbaker/complex/examples" verbose="true"/>
-        <delete dir="${dir.vendor}/mobiledetect/mobiledetectlib/docs" verbose="true"/>
-        <delete dir="${dir.vendor}/myclabs/deep-copy/doc" verbose="true"/>
-        <delete dir="${dir.vendor}/phenx/php-font-lib/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/phenx/php-svg-lib/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/phpoffice/phpspreadsheet/docs" verbose="true"/>
-        <delete dir="${dir.vendor}/phpoffice/phpspreadsheet/samples" verbose="true"/>
-        <delete dir="${dir.vendor}/phpunit/php-code-coverage/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/phpunit/php-timer/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/phpunit/php-token-stream/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/phpunit/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/phpunit/phpunit-mock-objects/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/rospdf/pdf-php/examples" verbose="true"/>
-        <delete dir="${dir.vendor}/rospdf/pdf-php/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sabberworm/php-css-parser/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/code-unit-reverse-lookup/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/comparator/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/diff/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/environment/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/exporter/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/global-state/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/object-enumerator/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/sebastian/recursion-context/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/smarty/smarty/demo" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/config/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/console/Tester" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/console/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/debug/Resources/ext/tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/debug/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/dependency-injection/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/event-dispatcher/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/filesystem/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/http-foundation/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/process/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/translation/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/symfony/yaml/Tests" verbose="true"/>
-        <delete dir="${dir.vendor}/twig/twig/doc" verbose="true"/>
-        <delete dir="${dir.vendor}/twig/twig/test" verbose="true"/>
-        <delete dir="${dir.vendor}/yubico/u2flib-server/examples" verbose="true"/>
-        <delete dir="${dir.vendor}/yubico/u2flib-server/tests" verbose="true"/>
+    <!-- Install PHP dependencies -->
+    <target name="install-php-deps" depends="init">
+        <echo msg="Installing PHP dependencies"/>
+        <exec executable="${composer.cmd}" output="${build.dir}/composer.log" error="${build.dir}/composer.err">
+            <arg value="install"/>
+            <arg value="--no-interaction"/>
+            <arg value="--prefer-dist"/>
+            <arg value="--no-ansi"/>
+            <arg value="--no-progress"/>
+            <arg value="--optimize-autoloader"/>
+        </exec>
+        <echo msg="PHP dependencies installation completed"/>
     </target>
 
-
-    <target name="clean-assets-dir">
-        <delete dir="${dir.assets}/flot/examples" verbose="true"/>
-        <delete dir="${dir.assets}/jquery-datetimepicker/tests" verbose="true"/>
-        <delete dir="${dir.assets}/numeral/tests" verbose="true"/>
+    <!-- Install JS dependencies -->
+    <target name="install-js-deps" depends="install-php-deps">
+        <echo msg="Installing JS dependencies"/>
+        <exec executable="${npm.cmd}" output="${build.dir}/npm-ci.log" error="${build.dir}/npm-ci.err">
+            <arg value="ci"/>
+        </exec>
+        <exec executable="${npm.cmd}" output="${build.dir}/npm-build.log" error="${build.dir}/npm-build.err">
+            <arg value="run"/>
+            <arg value="build"/>
+        </exec>
+        <echo msg="JS dependencies installation completed"/>
     </target>
 
+    <target name="verify-lockfiles" depends="init">
+        <available file="composer.lock" property="has.composer.lock"/>
+        <fail unless="has.composer.lock" message="composer.lock is missing. Run 'composer update' to generate it before building."/>
+
+        <available file="package-lock.json" property="has.package.lock"/>
+        <fail unless="has.package.lock" message="package-lock.json is missing. Run 'npm install' to generate it and commit before building."/>
+    </target>
+
+    <target name="build-manifest" depends="verify-lockfiles">
+        <echo msg="Generating build manifest"/>
+        <exec executable="${php.cmd}" output="${build.dir}/generate-manifest.log" error="${build.dir}/generate-manifest.err">
+            <arg value="tools/generate-build-manifest.php"/>
+            <arg value="${manifest.file}"/>
+        </exec>
+    </target>
+
+    <target name="stage" depends="install-js-deps, build-manifest">
+        <echo msg="Staging files for packaging"/>
+        <delete dir="${stage.dir}"/>
+        <mkdir dir="${stage.dir}"/>
+        <copy todir="${stage.dir}">
+            <fileset dir="${project.basedir}" excludes="vendor/**,node_modules/**,build/**"/>
+        </copy>
+        <!-- Include the manifest inside the artifact root -->
+        <copy file="${manifest.file}" todir="${stage.dir}"/>
+    </target>
+
+    <!-- Package artifact -->
+    <target name="package" depends="stage">
+        <echo msg="Creating PHAR build artifact"/>
+        <exec executable="${php.cmd}">
+            <arg value="-d"/>
+            <arg value="phar.readonly=0"/>
+            <arg value="tools/create-phar.php"/>
+            <arg value="${stage.dir}"/>
+            <arg value="${artifact.name}"/>
+        </exec>
+        <echo msg="Artifact created: ${artifact.name}"/>
+        <exec executable="${php.cmd}" output="${artifact.sha256}" logoutput="true">
+            <arg value="-r"/>
+            <arg value="echo hash_file('sha256', '${artifact.name}');"/>
+        </exec>
+    </target>
+
+    <!-- Generate HTML build report -->
+    <target name="build-report" depends="package">
+        <echo msg="Generating HTML build report"/>
+        <exec executable="${php.cmd}">
+            <arg value="tools/generate-html-report.php"/>
+            <arg value="${build.dir}"/>
+            <arg value="${report.dir}"/>
+            <arg value="${artifact.name}"/>
+        </exec>
+        <echo msg="HTML build report generated at ${report.dir}/build-report.html"/>
+    </target>
+
+    <target name="repackage-phar" depends="init">
+        <echo msg="Repackaging PHAR from existing staged files"/>
+        <available file="${manifest.file}" property="has.manifest"/>
+        <fail unless="has.manifest" message="No staged files found at ${stage.dir}. Run the full build once to create staging (target: build or package)."/>
+        <exec executable="${php.cmd}">
+            <arg value="-d"/>
+            <arg value="phar.readonly=0"/>
+            <arg value="tools/create-phar.php"/>
+            <arg value="${stage.dir}"/>
+            <arg value="${artifact.name}"/>
+        </exec>
+        <exec executable="${php.cmd}" output="${artifact.sha256}" logoutput="true">
+            <arg value="-r"/>
+            <arg value="echo hash_file('sha256', '${artifact.name}');"/>
+        </exec>
+        <echo msg="Repackaged: ${artifact.name}"/>
+    </target>
+
+    <!-- Full build -->
+    <target name="build" depends="build-report">
+        <echo msg="Full build completed successfully. Open the report at ${report.dir}/build-report.html"/>
+    </target>
+
+    <!-- Clean + build in one command -->
+    <target name="clean-build" depends="clean, build">
+        <echo msg="Clean + Full build completed successfully"/>
+    </target>
 
 </project>
