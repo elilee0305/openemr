@@ -65,7 +65,7 @@ jobs:
             echo "Try connecting with mysqladmin:"
             mysqladmin ping -h mysql -uroot -proot || echo "mysqladmin cannot reach 'mysql'"
             echo "List running Docker containers (if available):"
-            docker ps || echo "Docker not available in this runner"
+                docker ps || echo "Docker not available in this runner"
 
       - name: Import OpenEMR test database
         run: |
