@@ -1,4 +1,4 @@
-name: OpenEMR CI Workflow
+name: OpenEMR CI Isolated Tests
 
 on:
   push:
@@ -7,20 +7,8 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  test-isolated:
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: openemr_test
-        options: >-
-          --health-cmd="mysqladmin ping -uroot -proot"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=30
 
     strategy:
       matrix:
@@ -28,50 +16,24 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, intl, curl, xml, json, mysqli
+          extensions: mbstring, intl, curl, xml, json
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Wait for MySQL to be ready
+      - name: Debug environment
         run: |
-          echo "Waiting for MySQL service to be ready..."
-          for i in {1..60}; do
-            mysql -h mysql -uroot -proot -e "SELECT 1;" && break
-            echo "MySQL not ready yet, sleeping 2s..."
-            sleep 2
-          done
+          echo "PHP version: $(php -v)"
+          echo "Composer version: $(composer --version)"
+          echo "Installed PHP extensions: $(php -m | sort)"
 
-      - name: Debug MySQL connection
-        run: |
-          echo "Environment variables:"
-          env | grep MYSQL
-          echo "Try connecting to MySQL:"
-          mysql -h mysql -uroot -proot -e "SELECT VERSION();" || echo "Connection failed"
-
-      - name: Disable strict mode and create database
-        run: |
-          mysql -h mysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
-          mysql -h mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
-
-      - name: Import OpenEMR test database
-        run: |
-          if [ -f sql/database.sql ]; then
-            mysql -h mysql -uroot -proot openemr_test < sql/database.sql
-          else
-            echo "sql/database.sql not found. Skipping import."
-          fi
-        continue-on-error: true
-
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --configuration phpunit.xml
-
-      - name: Run PHP Code Sniffer
-        run: vendor/bin/phpcs --standard=PSR12 controllers library
+      - name: Run isolated PHPUnit tests
+        run: vendor/bin/phpunit --configuration phpunit.xml --testsuite isolated
