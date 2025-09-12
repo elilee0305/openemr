@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit 
+<phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
-    backupGlobals="false"
     bootstrap="tests/bootstrap-isolated.php"
     colors="true"
-    processIsolation="false"
     stopOnError="false"
     stopOnFailure="false"
     stopOnIncomplete="false"
     stopOnSkipped="false"
     stopOnRisky="false"
-    displayDetailsOnTestsThatTriggerDeprecations="true"
-    displayDetailsOnTestsThatTriggerErrors="true"
-    displayDetailsOnTestsThatTriggerWarnings="true"
-    displayDetailsOnTestsThatTriggerNotices="true"
-    testdox="false">
-
+    processIsolation="false"
+    backupGlobals="false"
+>
     <php>
         <ini name="error_reporting" value="-1"/>
-        <server name="DISABLE_DATABASE" value="1"/>
     </php>
 
     <testsuites>
@@ -29,9 +23,10 @@
     </testsuites>
 
     <logging>
+        <!-- JUnit XML Report -->
         <junit outputFile="reports/junit/report.xml"/>
+        <!-- Testdox Reports -->
         <testdoxHtml outputFile="reports/testdox/testdox.html"/>
         <testdoxText outputFile="reports/testdox/testdox.txt"/>
     </logging>
-
 </phpunit>
