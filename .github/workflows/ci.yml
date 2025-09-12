@@ -16,9 +16,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: openemr_test
-          MYSQL_ROOT_HOST: '%'
         options: >-
-          --health-cmd="mysqladmin ping --silent"
+          --health-cmd="mysqladmin ping -uroot -proot"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=10
@@ -41,43 +40,38 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Set MySQL environment variables
+      - name: Set MySQL environment
         run: |
           echo "MYSQL_HOST=mysql" >> $GITHUB_ENV
           echo "MYSQL_PORT=3306" >> $GITHUB_ENV
           echo "MYSQL_ROOT_PASSWORD=root" >> $GITHUB_ENV
           echo "MYSQL_DATABASE=openemr_test" >> $GITHUB_ENV
 
-      - name: Wait for MySQL service to be ready
+      - name: Wait for MySQL to be ready
         run: |
-          echo "Waiting for MySQL service..."
+          echo "Waiting for MySQL to accept connections..."
           for i in {1..30}; do
-            if mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -p$MYSQL_ROOT_PASSWORD -e "SELECT 1;" &> /dev/null; then
-              echo "MySQL is ready!"
-              break
-            fi
-            echo "Waiting 2s..."
+            mysql -h mysql -P 3306 -uroot -proot -e "SELECT 1;" && break
+            echo "MySQL not ready yet, waiting 2s..."
             sleep 2
           done
 
-      - name: Debug MySQL host connectivity
+      - name: Debug MySQL connection
         run: |
+          echo "Checking MySQL connection..."
           echo "Environment variables:"
           env | grep MYSQL
-          echo "Listing Docker containers (service containers in runner):"
-          docker ps || echo "Docker not available in this runner"
-          echo "Attempt test connection:"
-          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -p$MYSQL_ROOT_PASSWORD -e "SELECT VERSION();" || echo "Connection failed!"
+          mysql -h mysql -P 3306 -uroot -proot -e "SELECT VERSION();" || echo "MySQL test connection failed"
 
-      - name: Create MySQL test database and disable strict mode
+      - name: Disable strict mode and create database
         run: |
-          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
-          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -p$MYSQL_ROOT_PASSWORD -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql -h mysql -P 3306 -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql -h mysql -P 3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       - name: Import OpenEMR test database
         run: |
           if [ -f sql/database.sql ]; then
-            mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < sql/database.sql
+            mysql -h mysql -P 3306 -uroot -proot openemr_test < sql/database.sql
           else
             echo "sql/database.sql not found. Skipping import."
           fi
