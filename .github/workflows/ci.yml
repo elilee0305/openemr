@@ -5,7 +5,7 @@ on:
   push:
     branches: [ master]
   pull_request:
-    branches: [ master ]
+    branches: [ master]
 
 jobs:
   test:
@@ -49,8 +49,11 @@ jobs:
             sleep 2
           done
 
+      - name: Create MySQL test database
+        run: mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+
       - name: Import test database
-        run: mysql -h127.0.0.1 -uroot -proot openemr_test < sql/openemr_test.sql
+        run: mysql -h127.0.0.1 -uroot -proot openemr_test < tests/_fixtures/test_data.sql
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --configuration phpunit.xml
