@@ -1,11 +1,11 @@
 
-name: OpenEMR CI Setup Workflow
+name: OpenEMR CI Setup Workflows
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   test:
