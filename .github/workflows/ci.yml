@@ -15,11 +15,9 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: openemr_test
-        ports:
-          - 3306:3306
         options: >-
           --default-authentication-plugin=mysql_native_password
-          --sql-mode="NO_ENGINE_SUBSTITUTION"
+          --sql-mode=NO_ENGINE_SUBSTITUTION
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
@@ -57,13 +55,13 @@ jobs:
         run: |
           mkdir -p sites/default
           echo "<?php
-          $GLOBALS['adodb_new_link'] = 1;
-          $GLOBALS['adodb_logsql'] = true;
-          $host='127.0.0.1';
-          $port=3306;
-          $dbname='openemr_test';
-          $username='root';
-          $password='root';
+          \$GLOBALS['adodb_new_link'] = 1;
+          \$GLOBALS['adodb_logsql'] = true;
+          \$host='127.0.0.1';
+          \$port=3306;
+          \$dbname='openemr_test';
+          \$username='root';
+          \$password='root';
           ?>" > sites/default/sqlconf.php
 
       - name: Import OpenEMR test database
