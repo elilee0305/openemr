@@ -20,7 +20,7 @@ jobs:
           --health-cmd="mysqladmin ping -uroot -proot"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=30
 
     strategy:
       matrix:
@@ -40,38 +40,31 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Set MySQL environment
-        run: |
-          echo "MYSQL_HOST=mysql" >> $GITHUB_ENV
-          echo "MYSQL_PORT=3306" >> $GITHUB_ENV
-          echo "MYSQL_ROOT_PASSWORD=root" >> $GITHUB_ENV
-          echo "MYSQL_DATABASE=openemr_test" >> $GITHUB_ENV
-
       - name: Wait for MySQL to be ready
         run: |
-          echo "Waiting for MySQL to accept connections..."
-          for i in {1..30}; do
-            mysql -h mysql -P 3306 -uroot -proot -e "SELECT 1;" && break
-            echo "MySQL not ready yet, waiting 2s..."
+          echo "Waiting for MySQL service to be ready..."
+          for i in {1..60}; do
+            mysql -h mysql -uroot -proot -e "SELECT 1;" && break
+            echo "MySQL not ready yet, sleeping 2s..."
             sleep 2
           done
 
       - name: Debug MySQL connection
         run: |
-          echo "Checking MySQL connection..."
           echo "Environment variables:"
           env | grep MYSQL
-          mysql -h mysql -P 3306 -uroot -proot -e "SELECT VERSION();" || echo "MySQL test connection failed"
+          echo "Try connecting to MySQL:"
+          mysql -h mysql -uroot -proot -e "SELECT VERSION();" || echo "Connection failed"
 
       - name: Disable strict mode and create database
         run: |
-          mysql -h mysql -P 3306 -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
-          mysql -h mysql -P 3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+          mysql -h mysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql -h mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       - name: Import OpenEMR test database
         run: |
           if [ -f sql/database.sql ]; then
-            mysql -h mysql -P 3306 -uroot -proot openemr_test < sql/database.sql
+            mysql -h mysql -uroot -proot openemr_test < sql/database.sql
           else
             echo "sql/database.sql not found. Skipping import."
           fi
