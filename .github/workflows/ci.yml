@@ -10,7 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Use MySQL as a service; GitHub Actions automatically waits until it's healthy
     services:
       mysql:
         image: mysql:8.0
@@ -29,11 +28,9 @@ jobs:
         php: ['8.3', '8.2']
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up PHP
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -41,21 +38,20 @@ jobs:
           extensions: mbstring, intl, curl, xml, json, mysqli
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
-      # Install Composer dependencies
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      # Create MySQL test database (service hostname is available automatically)
+      # Create MySQL test database
       - name: Create MySQL test database
         run: |
-          mysql -h ${{ job.services.mysql.host }} -P ${{ job.services.mysql.port }} \
-            -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot \
+            -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       # Disable strict mode
       - name: Disable strict mode
         run: |
-          mysql -h ${{ job.services.mysql.host }} -P ${{ job.services.mysql.port }} \
-            -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot \
+            -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
 
       # Create sqlconf.php for CI
       - name: Create sqlconf.php for CI
@@ -64,8 +60,8 @@ jobs:
           echo "<?php
           \$GLOBALS['adodb_new_link'] = 1;
           \$GLOBALS['adodb_logsql'] = true;
-          \$host='${{ job.services.mysql.host }}';
-          \$port=${{ job.services.mysql.port }};
+          \$host='$MYSQL_HOST';
+          \$port=$MYSQL_PORT;
           \$dbname='openemr_test';
           \$username='root';
           \$password='root';
@@ -74,8 +70,7 @@ jobs:
       # Import OpenEMR test database
       - name: Import OpenEMR test database
         run: |
-          mysql -h ${{ job.services.mysql.host }} -P ${{ job.services.mysql.port }} \
-            -uroot -proot openemr_test < sql/database.sql
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot openemr_test < sql/database.sql
 
       # Run PHPUnit tests
       - name: Run PHPUnit tests
