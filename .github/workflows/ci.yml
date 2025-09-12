@@ -29,8 +29,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -42,40 +41,38 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Wait for MySQL service to be ready
+      - name: Wait for MySQL to be ready
         run: |
-          echo "Waiting for MySQL at host 'mysql'..."
+          echo "Waiting for MySQL service..."
           for i in {1..30}; do
             mysqladmin ping -hmysql -uroot -proot &> /dev/null && break
-            echo "Waiting for MySQL..."
-            sleep 2
+            echo "Waiting 1s..."
+            sleep 1
           done
 
-      - name: Disable strict mode for MySQL
-        run: mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
-
-      - name: Create MySQL test database
-        run: mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
-
-      - name: Create sqlconf.php for CI
+      - name: Create MySQL test database and disable strict mode
         run: |
-          mkdir -p sites/default
-          echo "<?php
-          \$GLOBALS['adodb_new_link'] = 1;
-          \$GLOBALS['adodb_logsql'] = true;
-          \$host='mysql';
-          \$port=3306;
-          \$dbname='openemr_test';
-          \$username='root';
-          \$password='root';
-          ?>" > sites/default/sqlconf.php
+          mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+          mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+
+      - name: Debug MySQL host connectivity
+        run: |
+            echo "Checking MySQL service container..."
+            echo "Environment variables:"
+            env | grep MYSQL
+            echo "Ping MySQL container hostname 'mysql':"
+            ping -c 4 mysql || echo "Ping failed"
+            echo "Try connecting with mysqladmin:"
+            mysqladmin ping -h mysql -uroot -proot || echo "mysqladmin cannot reach 'mysql'"
+            echo "List running Docker containers (if available):"
+            docker ps || echo "Docker not available in this runner"
 
       - name: Import OpenEMR test database
         run: |
           if [ -f sql/database.sql ]; then
             mysql -hmysql -uroot -proot openemr_test < sql/database.sql
           else
-            echo "Warning: sql/database.sql not found. Skipping import."
+            echo "sql/database.sql not found. Skipping import."
           fi
         continue-on-error: true
 
