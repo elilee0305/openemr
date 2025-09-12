@@ -1,4 +1,4 @@
-name: OpenEMR CI Workflow
+name: OpenEMR CI Setup Workflow
 
 on:
   push:
@@ -14,43 +14,54 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: openemr_test
           MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
+          MYSQL_DATABASE: openemr_test
         options: >-
           --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
+          --health-interval=5s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
+
+    strategy:
+      matrix:
+        php: ['8.3', '8.2']
+      fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: ${{ matrix.php }}
           extensions: mbstring, intl, curl, xml, json, mysqli
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Wait for MySQL to be ready
+      - name: Debug MySQL host
         run: |
-          echo "Waiting for MySQL service..."
+          echo "MYSQL_HOST is mysql"
+          echo "MYSQL_PORT is 3306"
+
+      - name: Wait for MySQL service
+        run: |
+          echo "Waiting for MySQL to be ready..."
           for i in {1..30}; do
             mysqladmin ping -hmysql -uroot -proot &> /dev/null && break
             echo "Waiting for MySQL..."
             sleep 2
           done
 
-      - name: Create OpenEMR test database
-        run: mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
-
       - name: Disable strict mode for MySQL
-        run: mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+        run: |
+          mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+
+      - name: Create MySQL test database
+        run: |
+          mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       - name: Create sqlconf.php for CI
         run: |
@@ -79,3 +90,9 @@ jobs:
 
       - name: Run PHP Code Sniffer
         run: vendor/bin/phpcs --standard=PSR12 controllers library
+
+      - name: Debug MySQL logs if something failed
+        if: failure()
+        run: |
+          echo "=== MySQL Service Logs ==="
+          docker logs $(docker ps -aqf "ancestor=mysql:8.0" | head -n1)
