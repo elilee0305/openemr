@@ -51,11 +51,6 @@ jobs:
             sleep 2
           done
 
-      - name: Create MySQL test database
-        run: |
-          mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
-        continue-on-error: false  # stop if we cannot create the database
-
       - name: Disable strict mode for MySQL
         run: |
           mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
