@@ -1,0 +1,59 @@
+
+name: OpenEMR CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: openemr_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    strategy:
+      matrix:
+        php: ['8.1', '8.2']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2 
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, intl, curl, xml, json, mysqli
+          ini-values: post_max_size=256M, upload_max_filesize=256M
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping -h127.0.0.1 -uroot -proot; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
+      - name: Import test database
+        run: mysql -h127.0.0.1 -uroot -proot openemr_test < tests/_fixtures/test_data.sql
+
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit --configuration phpunit.xml
+
+      - name: Run PHP Code Sniffer (optional)
+        run: vendor/bin/phpcs --standard=PSR12 controllers library
