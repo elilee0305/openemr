@@ -1,5 +1,5 @@
 
-name: OpenEMR CI
+name: OpenEMR CI Setup Workflow
 
 on:
   push:
