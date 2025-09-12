@@ -1,25 +1,20 @@
 <?php
-// bootstrap-isolated.php
-
-declare(strict_types=1);
-
-if (php_sapi_name() !== 'cli') exit('CLI only');
-
-$vendorDir = dirname(__DIR__) . '/vendor';
-require_once $vendorDir . '/autoload.php';
-
-// Prevent any database connections
+// Prevent any real database calls
 $GLOBALS['disable_database_connection'] = true;
 
-// Mock database functions used in globals.php
-if (!empty($GLOBALS['disable_database_connection'])) {
-    function sqlQueryNoLog($query, $params = [], $silentFail = false) {
-        return [];
+// Mock SQL functions to bypass actual queries
+if (!function_exists('sqlStatementNoLog')) {
+    function sqlStatementNoLog($sql, $params = []) {
+        return []; // return empty array
     }
-    function sqlStatementNoLog($query, $params = []) {
-        return [];
+}
+if (!function_exists('sqlQueryNoLog')) {
+    function sqlQueryNoLog($sql, $params = [], $allow_null = false) {
+        return []; // return empty array
     }
+}
+if (!function_exists('sqlFetchArray')) {
     function sqlFetchArray($result) {
-        return false;
+        return false; // no rows
     }
 }
