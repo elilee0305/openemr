@@ -1,0 +1,80 @@
+name: CI 
+
+on:
+  push:
+    branches: [ "feature-build-automation" ]
+  pull_request:
+    branches: [ "feature-build-automation" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checko  ut@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+          extensions: xdebug, zlib, phar, zip
+          ini-values: |
+            phar.readonly=0
+            xdebug.mode=coverage
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install PHP dependencies (Composer)
+        run: |
+          composer install --no-interaction --prefer-dist --no-ansi --no-progress
+
+      - name: Install JS deps and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Run isolated tests with coverage
+        run: |
+          ./vendor/bin/phpunit -c phpunit-isolated.xml --coverage-html build/coverage-isolated-html
+
+      - name: Build with Phing (full clean-build)
+        run: |
+          php vendor/bin/phing -f build.xml clean-build
+
+      - name: Upload PHAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openemr-phar
+          path: |
+            openemr-artifact.phar
+            build/openemr-artifact.sha256
+          if-no-files-found: error
+
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs
+          path: |
+            build/report/**
+            build/BUILD-MANIFEST.json
+            build/coverage-isolated-html/**
+            build/*.log
+            build/*.err
+          if-no-files-found: warn
