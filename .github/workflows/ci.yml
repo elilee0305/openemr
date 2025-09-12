@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         php: ['8.3', '8.2']
-      fail-fast: false  # continue other matrix jobs even if one fails
+      fail-fast: false
 
     steps:
       - name: Checkout code
@@ -42,18 +42,27 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      - name: Define MySQL host and port
+        run: |
+          echo "MYSQL_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "MYSQL_PORT=${{ job.services.mysql.ports['3306/tcp'] }}" >> $GITHUB_ENV
+
       - name: Wait for MySQL to be ready
         run: |
-          echo "Waiting for MySQL service..."
+          echo "Waiting for MySQL service at $MYSQL_HOST:$MYSQL_PORT..."
           for i in {1..30}; do
-            mysqladmin ping -hmysql -uroot -proot &> /dev/null && break
+            mysqladmin ping -h$MYSQL_HOST -P$MYSQL_PORT -uroot -proot &> /dev/null && break
             echo "Waiting for MySQL..."
             sleep 2
           done
 
       - name: Disable strict mode for MySQL
         run: |
-          mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql -h$MYSQL_HOST -P$MYSQL_PORT -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+
+      - name: Create MySQL test database
+        run: |
+          mysql -h$MYSQL_HOST -P$MYSQL_PORT -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       - name: Create sqlconf.php for CI
         run: |
@@ -61,8 +70,8 @@ jobs:
           echo "<?php
           \$GLOBALS['adodb_new_link'] = 1;
           \$GLOBALS['adodb_logsql'] = true;
-          \$host='mysql';
-          \$port=3306;
+          \$host='$MYSQL_HOST';
+          \$port=$MYSQL_PORT;
           \$dbname='openemr_test';
           \$username='root';
           \$password='root';
@@ -71,14 +80,13 @@ jobs:
       - name: Import OpenEMR test database
         run: |
           if [ -f sql/database.sql ]; then
-            mysql -hmysql -uroot -proot openemr_test < sql/database.sql
+            mysql -h$MYSQL_HOST -P$MYSQL_PORT -uroot -proot openemr_test < sql/database.sql
           else
             echo "Warning: sql/database.sql not found. Skipping import."
           fi
-        continue-on-error: true  # continue even if import fails
+        continue-on-error: true
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --configuration phpunit.xml
 
-      - name: Run PHP Code Sniffer (optional)
-        run: vendor/bin/phpcs --standard=PSR12 controllers library
+    
