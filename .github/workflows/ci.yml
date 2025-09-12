@@ -45,7 +45,7 @@ jobs:
       - name: Define MySQL host and port
         run: |
           echo "MYSQL_HOST=127.0.0.1" >> $GITHUB_ENV
-          echo "MYSQL_PORT=${{ job.services.mysql.ports['3306/tcp'] }}" >> $GITHUB_ENV
+          echo "MYSQL_PORT=3306" >> $GITHUB_ENV     # AI-generated: Set MySQL port explicitly for GitHub Actions
 
       - name: Wait for MySQL to be ready
         run: |
@@ -58,7 +58,12 @@ jobs:
 
       - name: Disable strict mode for MySQL
         run: |
-          mysql -h$MYSQL_HOST -P$MYSQL_PORT -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql \
+            -h "${{ env.MYSQL_HOST }}" \
+            -P "${{ env.MYSQL_PORT }}" \
+            -uroot \
+            -p"${{ env.MYSQL_ROOT_PASSWORD }}" \
+            -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';
 
       - name: Create MySQL test database
         run: |
