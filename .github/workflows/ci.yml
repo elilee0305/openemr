@@ -44,14 +44,12 @@ jobs:
       # Create MySQL test database
       - name: Create MySQL test database
         run: |
-          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot \
-            -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       # Disable strict mode
       - name: Disable strict mode
         run: |
-          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot \
-            -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+          mysql -h $MYSQL_HOST -P $MYSQL_PORT -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
 
       # Create sqlconf.php for CI
       - name: Create sqlconf.php for CI
