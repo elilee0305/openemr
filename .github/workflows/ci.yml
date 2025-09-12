@@ -1,4 +1,4 @@
-name: OpenEMR CI Setup Workflow
+name: OpenEMR CI Workflow
 
 on:
   push:
@@ -16,6 +16,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: openemr_test
+          MYSQL_ROOT_HOST: '%'
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=5s
@@ -41,14 +42,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Debug MySQL host
+      - name: Wait for MySQL service to be ready
         run: |
-          echo "MYSQL_HOST is mysql"
-          echo "MYSQL_PORT is 3306"
-
-      - name: Wait for MySQL service
-        run: |
-          echo "Waiting for MySQL to be ready..."
+          echo "Waiting for MySQL at host 'mysql'..."
           for i in {1..30}; do
             mysqladmin ping -hmysql -uroot -proot &> /dev/null && break
             echo "Waiting for MySQL..."
@@ -56,12 +52,10 @@ jobs:
           done
 
       - name: Disable strict mode for MySQL
-        run: |
-          mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+        run: mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
 
       - name: Create MySQL test database
-        run: |
-          mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+        run: mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
       - name: Create sqlconf.php for CI
         run: |
@@ -90,9 +84,3 @@ jobs:
 
       - name: Run PHP Code Sniffer
         run: vendor/bin/phpcs --standard=PSR12 controllers library
-
-      - name: Debug MySQL logs if something failed
-        if: failure()
-        run: |
-          echo "=== MySQL Service Logs ==="
-          docker logs $(docker ps -aqf "ancestor=mysql:8.0" | head -n1)
