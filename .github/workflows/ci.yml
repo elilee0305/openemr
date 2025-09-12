@@ -16,21 +16,22 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: openemr_test
-          MYSQL_ROOT_HOST: '%'
         options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=10
+          --health-cmd="mysqladmin ping -uroot -proot --silent"
+          --health-interval=2s
+          --health-timeout=2s
+          --health-retries=5
 
     strategy:
       matrix:
         php: ['8.3', '8.2']
 
     steps:
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Set up PHP
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -38,25 +39,38 @@ jobs:
           extensions: mbstring, intl, curl, xml, json, mysqli
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
+      # Install Composer dependencies
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      # Wait until MySQL service is ready
+      - name: Wait for MySQL
+        run: |
+          for i in {1..15}; do
+            if mysqladmin ping -hmysql -uroot -proot --silent; then
+              echo "MySQL is ready"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
       # Create MySQL test database
       - name: Create MySQL test database
-        run: mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
+        run: mysql -hmysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS openemr_test;"
 
-      # Disable strict mode
+      # Disable strict mode for MySQL
       - name: Disable strict mode
-        run: mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
+        run: mysql -hmysql -uroot -proot -e "SET GLOBAL sql_mode='NO_ENGINE_SUBSTITUTION';"
 
       # Create sqlconf.php for CI
-      - name: Create sqlconf.php for CI
+      - name: Create sqlconf.php
         run: |
           mkdir -p sites/default
           echo "<?php
           \$GLOBALS['adodb_new_link'] = 1;
           \$GLOBALS['adodb_logsql'] = true;
-          \$host='127.0.0.1';
+          \$host='mysql';
           \$port=3306;
           \$dbname='openemr_test';
           \$username='root';
@@ -65,7 +79,7 @@ jobs:
 
       # Import OpenEMR test database
       - name: Import OpenEMR test database
-        run: mysql -h 127.0.0.1 -P 3306 -uroot -proot openemr_test < sql/database.sql
+        run: mysql -hmysql -uroot -proot openemr_test < sql/database.sql
 
       # Run PHPUnit tests
       - name: Run PHPUnit tests
