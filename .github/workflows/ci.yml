@@ -55,12 +55,16 @@ jobs:
 
       - name: Debug MySQL connectivity
         run: |
-          echo "Checking MySQL environment variables..."
+          echo "Checking MySQL container and host resolution..."
+          echo "Environment variables:"
           env | grep MYSQL
-          echo "Trying mysqladmin ping:"
-          mysqladmin ping -hmysql -uroot -proot || echo "mysqladmin cannot reach 'mysql'. Check service name and port."
-          echo "Service container should be up and healthy."
-          docker ps || echo "Docker not available in this runner."
+          echo "Ping MySQL container hostname 'mysql':"
+          ping -c 4 mysql || echo "Ping failed: host may be unreachable from the runner"
+          echo "Try connecting with mysqladmin:"
+          mysqladmin ping -h mysql -uroot -proot || echo "mysqladmin cannot reach 'mysql'"
+          echo "Check service container status (limited in GitHub runners):"
+          docker ps || echo "Docker not available in this runner"
+          echo "If MySQL is unreachable, check the service name and ports in your workflow."
 
       - name: Create MySQL test database and disable strict mode
         run: |
