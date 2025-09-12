@@ -69,4 +69,3 @@ class SanitizeMultiByteCaseInsensitiveStringEqualsTest extends TestCase
         $this->assertFalse(mb_is_string_equal_ci('OpenEMR', 'OpenEMR '));
     }
 }
-
